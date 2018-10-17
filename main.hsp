@@ -1,0 +1,109 @@
+#include "hsp3dish.as"
+window_width=640
+window_height=480
+radius = 100.0
+sep_weight = 0.1
+dir_weight = 0.05
+gath_weight = 0.02
+celload "bird.png", 1
+
+BIRDS_NUM = 10
+ddim birds_x, BIRDS_NUM
+ddim birds_y, BIRDS_NUM
+ddim birds_vx, BIRDS_NUM
+ddim birds_vy, BIRDS_NUM
+
+*init
+  repeat BIRDS_NUM
+    birds_x(cnt) =cnt*10.0
+    birds_vx(cnt)=cnt*10.0
+    birds_y(cnt) =cnt*10.0
+    birds_vy(cnt)=cnt*10.0
+    ; birds_x(cnt) =rnd(window_width*1.0)
+    ; birds_vx(cnt)=rnd(window_width*1.0)
+    ; birds_y(cnt) =rnd(window_height/100.0)
+    ; birds_vy(cnt)=rnd(window_height/100.0)
+  loop
+
+*main
+  redraw 0
+  boxf
+  gmode 2
+
+*update
+  repeat BIRDS_NUM
+    cnt1 = cnt
+    fx_sep = 0.0
+    fy_sep = 0.0
+    fx_dir = 0.0
+    fy_dir = 0.0
+    fx_gath = 0.0
+    fy_gath = 0.0
+
+    n1 = 0
+    n2 = 0
+    n3 = 0
+
+    repeat BIRDS_NUM
+      cnt2 = cnt
+      if cnt1 != cnt2 {
+        dx = 1.0*birds_x(cnt2) - birds_x(cnt1)
+        dy = 1.0*birds_y(cnt2) - birds_y(cnt1)
+        notesel buf
+        noteadd str(cnt1)
+        notesave("log.txt")
+        dvx = 1.0*birds_vx(cnt2) - birds_vx(cnt1)
+        dvy = 1.0*birds_vy(cnt2) - birds_vy(cnt1)
+        distance = sqrt(dx*dx + dy*dy)
+
+        if distance < radius {
+          fx_sep -= dx/distance
+          fy_sep -= dy/distance
+          n1 = n1 + 1
+        }
+
+        if distance < radius {
+          fx_dir += -dvx
+          fy_dir += -dvy
+          n2 = n2 + 1
+        }
+
+        if distance < radius {
+          fx_gath += dx/(1.0*distance)
+          fy_gath += dy/(1.0*distance)
+          n3 = n3 + 1
+        }
+      }
+    loop
+
+    if(n1 > 0){
+      fx_sep /= n1
+      fy_sep /= n1
+    }
+    if(n2 > 0){
+      fx_dir /= n2
+      fy_dir /= n2
+    }
+    if(n3 > 0){
+      r = sqrt(fx_gath * fx_gath + fy_gath * fy_gath)
+      fx_gath /= r
+      fy_gath /= r
+    }
+    birds_vx(cnt1) = birds_vx(cnt1) + sep_weight*fx_sep + dir_weight*fx_dir + gath_weight*fx_gath
+    birds_vy(cnt1) = birds_vy(cnt1) + sep_weight*fy_sep + dir_weight*fy_dir + gath_weight*fy_gath
+    v_abs = 1.0*sqrt(birds_vx(cnt1)*birds_vx(cnt1) + birds_vy(cnt1)*birds_vy(cnt1))
+    birds_vx(cnt1) = double(birds_vx(cnt1)) / v_abs
+    birds_vy(cnt1) = double(birds_vy(cnt1)) / v_abs
+
+    birds_x(cnt1) += birds_vx(cnt1)
+    birds_y(cnt1) += birds_vy(cnt1)
+  loop
+
+  repeat BIRDS_NUM
+    pos birds_x(cnt), birds_y(cnt)
+    celput 1
+  loop
+
+  redraw 1
+  await 60
+  goto *main
