@@ -1,28 +1,30 @@
 #include "hsp3dish.as"
 window_width=640
 window_height=480
-radius = 100.0
+radius = 50.0
 sep_weight = 0.1
 dir_weight = 0.05
 gath_weight = 0.02
 celload "bird.png", 1
 
-BIRDS_NUM = 10
+BIRDS_NUM = 50
 ddim birds_x, BIRDS_NUM
 ddim birds_y, BIRDS_NUM
 ddim birds_vx, BIRDS_NUM
 ddim birds_vy, BIRDS_NUM
 
+notesel buf
+
 *init
   repeat BIRDS_NUM
-    birds_x(cnt) =cnt*10.0
-    birds_vx(cnt)=cnt*10.0
-    birds_y(cnt) =cnt*10.0
-    birds_vy(cnt)=cnt*10.0
-    ; birds_x(cnt) =rnd(window_width*1.0)
-    ; birds_vx(cnt)=rnd(window_width*1.0)
-    ; birds_y(cnt) =rnd(window_height/100.0)
-    ; birds_vy(cnt)=rnd(window_height/100.0)
+    ; birds_x(cnt) =double(cnt*10)
+    ; birds_vx(cnt)=double(cnt*10)
+    ; birds_y(cnt) =double(cnt*10)
+    ; birds_vy(cnt)=double(cnt*10)
+    birds_x(cnt) =double(rnd(window_width))
+    birds_vx(cnt)=double(rnd(window_width))
+    birds_y(cnt) =double(rnd(window_height))
+    birds_vy(cnt)=double(rnd(window_height))
   loop
 
 *main
@@ -49,9 +51,6 @@ ddim birds_vy, BIRDS_NUM
       if cnt1 != cnt2 {
         dx = 1.0*birds_x(cnt2) - birds_x(cnt1)
         dy = 1.0*birds_y(cnt2) - birds_y(cnt1)
-        notesel buf
-        noteadd str(cnt1)
-        notesave("log.txt")
         dvx = 1.0*birds_vx(cnt2) - birds_vx(cnt1)
         dvy = 1.0*birds_vy(cnt2) - birds_vy(cnt1)
         distance = sqrt(dx*dx + dy*dy)
@@ -92,8 +91,9 @@ ddim birds_vy, BIRDS_NUM
     birds_vx(cnt1) = birds_vx(cnt1) + sep_weight*fx_sep + dir_weight*fx_dir + gath_weight*fx_gath
     birds_vy(cnt1) = birds_vy(cnt1) + sep_weight*fy_sep + dir_weight*fy_dir + gath_weight*fy_gath
     v_abs = 1.0*sqrt(birds_vx(cnt1)*birds_vx(cnt1) + birds_vy(cnt1)*birds_vy(cnt1))
-    birds_vx(cnt1) = double(birds_vx(cnt1)) / v_abs
-    birds_vy(cnt1) = double(birds_vy(cnt1)) / v_abs
+
+    birds_vx(cnt1) = double(birds_vx(cnt1)) / double(v_abs)
+    birds_vy(cnt1) = double(birds_vy(cnt1)) / double(v_abs)
 
     birds_x(cnt1) += birds_vx(cnt1)
     birds_y(cnt1) += birds_vy(cnt1)
