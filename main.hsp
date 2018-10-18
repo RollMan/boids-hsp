@@ -2,9 +2,9 @@
 window_width=640
 window_height=480
 radius = double(200.0)
-sep_weight = double(0.01)
+sep_weight = double(0.3)
 dir_weight = double(0.5)
-gath_weight = double(0.02)
+gath_weight = double(0.05)
 mouse_weight = double(0.2)
 celload "bird.png", 1
 
