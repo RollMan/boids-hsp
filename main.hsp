@@ -1,11 +1,11 @@
 #include "hsp3dish.as"
 window_width=640
 window_height=480
-radius = double(200.0)
-sep_weight = double(0.3)
-dir_weight = double(0.5)
-gath_weight = double(0.05)
-mouse_weight = double(0.2)
+radius = double(20.0)
+sep_weight = double(0.1)
+dir_weight = double(0.05)
+gath_weight = double(0.02)
+mouse_weight = double(0.02)
 celload "bird.png", 1
 
 BIRDS_NUM = 100
@@ -62,19 +62,19 @@ ddim birds_vy, BIRDS_NUM
         dvy = 1.0*birds_vy(cnt2) - birds_vy(cnt1)
         distance = sqrt(dx*dx + dy*dy)
 
-        if distance < radius {
+        if distance < radius-10 {
           fx_sep -= dx/distance
           fy_sep -= dy/distance
           n1 = n1 + 1
         }
 
         if distance < radius {
-          fx_dir += -dvx
-          fy_dir += -dvy
+          fx_dir += dvx
+          fy_dir += dvy
           n2 = n2 + 1
         }
 
-        if distance < radius {
+        if distance < radius + 10 {
           fx_gath += dx/(1.0*distance)
           fy_gath += dy/(1.0*distance)
           n3 = n3 + 1
@@ -128,6 +128,7 @@ ddim birds_vy, BIRDS_NUM
   repeat BIRDS_NUM
     pos birds_x(cnt), birds_y(cnt)
     angle = atan(birds_vx(cnt), birds_vy(cnt))
+    ; celput 1
     grotate 1, 0, 0, -(angle+PI)
   loop
 
