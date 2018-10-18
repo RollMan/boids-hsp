@@ -1,13 +1,13 @@
 #include "hsp3dish.as"
 window_width=640
 window_height=480
-radius = 50.0
-sep_weight = 0.1
-dir_weight = 0.05
+radius = 200.0
+sep_weight = 0.01
+dir_weight = 0.5
 gath_weight = 0.02
 celload "bird.png", 1
 
-BIRDS_NUM = 50
+BIRDS_NUM = 100
 ddim birds_x, BIRDS_NUM
 ddim birds_y, BIRDS_NUM
 ddim birds_vx, BIRDS_NUM
@@ -117,5 +117,5 @@ notesel buf
   loop
 
   redraw 1
-  await 60
+  await 2
   goto *main
