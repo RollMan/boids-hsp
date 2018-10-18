@@ -97,6 +97,18 @@ notesel buf
 
     birds_x(cnt1) += birds_vx(cnt1)
     birds_y(cnt1) += birds_vy(cnt1)
+
+    if birds_x(cnt1) < 0 {
+      birds_vx(cnt1) = absf(birds_vx(cnt1))
+    } else : if birds_x(cnt1) >= window_width {
+      birds_vx(cnt1) = -absf(birds_vx(cnt1))
+    }
+
+    if birds_y(cnt1) < 0 {
+      birds_vy(cnt1) = absf(birds_vy(cnt1))
+    } else : if birds_y(cnt1) >= window_height {
+      birds_vy(cnt1) = -absf(birds_vy(cnt1))
+    }
   loop
 
   repeat BIRDS_NUM
