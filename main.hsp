@@ -123,6 +123,7 @@ ddim birds_vy, BIRDS_NUM
   loop
 
 
+  circle mousex-5, mousey-5, mousex+5, mousey+5
 
   PI = 3.14159
   repeat BIRDS_NUM
