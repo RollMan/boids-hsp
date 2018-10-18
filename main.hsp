@@ -8,7 +8,7 @@ gath_weight = double(0.02)
 mouse_weight = double(0.2)
 celload "bird.png", 1
 
-BIRDS_NUM = 50
+BIRDS_NUM = 100
 ddim birds_x, BIRDS_NUM
 ddim birds_y, BIRDS_NUM
 ddim birds_vx, BIRDS_NUM
@@ -124,9 +124,11 @@ ddim birds_vy, BIRDS_NUM
 
 
 
+  PI = 3.14159
   repeat BIRDS_NUM
     pos birds_x(cnt), birds_y(cnt)
-    celput 1
+    angle = atan(birds_vx(cnt), birds_vy(cnt))
+    grotate 1, 0, 0, -(angle+PI)
   loop
 
   redraw 1
