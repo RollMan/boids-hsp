@@ -1,0 +1,106 @@
+#include "hsp3dish.as"
+BN = 100
+ddim bx, BN
+ddim by, BN
+ddim bvx, BN
+ddim bvy, BN
+*init
+  repeat BN
+    bx(cnt) =double(rnd(640))
+    bvx(cnt)=double(rnd(640))
+    by(cnt) =double(rnd(480))
+    bvy(cnt)=double(rnd(480))
+  loop
+*main
+  redraw 0
+  color 255, 255, 255
+  boxf
+  gmode 2
+  color 0, 0, 0
+*update
+  repeat BN
+    c1 = cnt
+    sx = 0.0
+    sy = 0.0
+    dx = 0.0
+    dy = 0.0
+    gx = 0.0
+    gy = 0.0
+
+    n1 = 0
+    n2 = 0
+    n3 = 0
+
+    repeat BN
+      c2 = cnt
+      if c1 != c2 {
+        dx = 1.0*bx(c2) - bx(c1)
+        dy = 1.0*by(c2) - by(c1)
+        dvx = 1.0*bvx(c2) - bvx(c1)
+        dvy = 1.0*bvy(c2) - bvy(c1)
+        distance = sqrt(dx*dx + dy*dy)
+
+        if distance < 20.0-10 {
+          sx -= dx/distance
+          sy -= dy/distance
+          n1 = n1 + 1
+        }
+
+        if distance < 20.0 {
+          dx += dvx
+          dy += dvy
+          n2 = n2 + 1
+        }
+
+        if distance < 20.0 + 10 {
+          gx += dx/(1.0*distance)
+          gy += dy/(1.0*distance)
+          n3 = n3 + 1
+        }
+
+      }
+    loop
+    if(n1 > 0){
+      sx /= n1
+      sy /= n1
+    }
+    if(n2 > 0){
+      dx /= n2
+      dy /= n2
+    }
+    if(n3 > 0){
+      r = sqrt(gx * gx + gy * gy)
+      gx /= r
+      gy /= r
+    }
+
+    bvx(c1) = bvx(c1) + 0.1*sx + 0.005*dx + 0.02*gx
+    bvy(c1) = bvy(c1) + 0.1*sy + 0.005*dy + 0.02*gy
+    v_abs = 1.0*sqrt(bvx(c1)*bvx(c1) + bvy(c1)*bvy(c1))
+
+    bvx(c1) = double(bvx(c1)) / double(v_abs)
+    bvy(c1) = double(bvy(c1)) / double(v_abs)
+
+    bx(c1) += bvx(c1)
+    by(c1) += bvy(c1)
+
+    if bx(c1) < 0 {
+      bvx(c1) = absf(bvx(c1))
+    } else : if bx(c1) >= 640 {
+      bvx(c1) = -absf(bvx(c1))
+    }
+
+    if by(c1) < 0 {
+      bvy(c1) = absf(bvy(c1))
+    } else : if by(c1) >= 480 {
+      bvy(c1) = -absf(bvy(c1))
+    }
+  loop
+  repeat BN
+    pos bx(cnt), by(cnt)
+    angle = atan(bvx(cnt), bvy(cnt))
+    circle bx(cnt)-3,by(cnt)-3,bx(cnt)+3,by(cnt)+3
+  loop
+  redraw 1
+  await 2
+  goto *main
